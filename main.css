@@ -1,16 +1,11 @@
 @font-face {
     font-family: "Digital Dismay";
-    src: url("./digital-dismay.otf") format("truetype");
+    src: url("digital-dismay.otf") format("truetype");
 }
 
 @font-face {
     font-family: "Press Start";
-    src: url("./prstart.ttf");
-}
-
-@font-face {
-    font-family: "MS Sans Serif";
-    src: url("./micross.ttf");
+    src: url("prstartk.ttf");
 }
 
 * {

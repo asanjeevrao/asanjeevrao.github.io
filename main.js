@@ -11,7 +11,9 @@ const easyGame = document.querySelector("#size-9");
 const mediumGame = document.querySelector("#size-16");
 const hardGame = document.querySelector("#size-30");
 const gameTable = document.querySelector("tbody.game-cells");
-//console.log(gameTable);
+
+const overallTable = document.querySelector(".game-container");
+console.log(gameTable.parentElement.style.width);
 
 gameTable.addEventListener('click', () => cellClicked(event.target)); //is there a way to write just the function name and arguments without adding the () & => like you would in a function without any arguments
 gameTable.addEventListener('contextmenu', () => flagCell(event,event.target));
@@ -59,6 +61,8 @@ function resetGame(){
             boardSize = 30;
             break;    
     }
+    //console.log(gameTable.parentElement);
+
 
     cellArray = [];    //flush old cellArray if it existed
     gameTable.innerHTML = ''; 
@@ -73,6 +77,9 @@ function resetGame(){
         //console.log(gameTable);
     }    
     gameTable.innerHTML = gameTable.innerHTML + tableCellElements;
+    document.querySelectorAll(".menu").forEach(e => {
+        e.colSpan = `${boardSize}`;
+    })
 
     //cellLoader.innerHTML = tableCellElements;
     //console.log(tableCellElements);
@@ -90,14 +97,12 @@ function resetGame(){
         //displayCell(cell);
     });
     timer.innerText = '000'; //set timer to 0 
-    minesCount.innerText = `0${mines}`;
+    minesCount.innerText = mines < 99 ? `0${mines}`:`${mines}`;
     resetButton.innerHTML = `<img src="images/smiley-face.png">`;
     gameState = 'refreshed';
     clearInterval(counter);
     //console.log(cellArray)
 } 
-
-//console.log(document.querySelector("[data-row='1'][data-col='8']"));
 
 /* Randomize array in-place using Durstenfeld shuffle algorithm */
 function shuffleArray(array){
@@ -117,24 +122,32 @@ function calculateNeighbours(obj){
         }, 0);
 };
 
-function flagCell (event, elem){  //why is this being highlighted as a Construtor function? 
-    console.log(elem);
+function flagCell (event, elem){ 
+    //console.log(elem);
     event.preventDefault(); //don't open right click menu
+    const targetCellElem = elem.tagName === 'IMG'? elem.parentElement: elem;
     const cellObjClicked = findClickedObj(elem);
-    console.log(cellObjClicked);
+    //console.log(cellObjClicked);
     if(cellObjClicked.state === true) return; // right click on opened cells should do nothing
     else if(cellObjClicked.useraction === 'free'){
-        elem.innerHTML = `<img src="images/flag.png">`
+        targetCellElem.innerHTML = `<img src="images/flag.png">`
         cellObjClicked.useraction = 'flagged';
-        minesCount.innerText = `0${parseInt(minesCount.innerText)-1}`;
+        minesCount.innerText = setToThreeDigits(parseInt(minesCount.innerText)-1);
     }
     else {
-        elem.innerHTML = '';
+        targetCellElem.innerHTML = '';
         cellObjClicked.useraction = 'free'; 
-        minesCount.innerText = `0${parseInt(minesCount.innerText)+1}`;
+        minesCount.innerText = setToThreeDigits(parseInt(minesCount.innerText)+1);
     }   
     //return false;
 };
+
+function setToThreeDigits(num){
+    if(num < -9 || num >= 100) return `${num}`;
+    else if (num < 0) return `-0${-num}`;
+    else if (num < 10) return `00${num}`;
+    else if (num < 100) return `0${num}`;
+}
 
 //determine action on click
 function cellClicked(elem){
@@ -157,24 +170,34 @@ function cellClicked(elem){
 
 function startTimer(){ 
     counter = setInterval(() => {
-        let currentTime = parseInt(timer.innerText) + 1;
-        if (currentTime < 10)
-            currentTime = `00${currentTime}`
-        else if (currentTime < 100)
-            currentTime = `0${currentTime}`;
-        timer.innerText = currentTime.toString();
+      timer.innerText = setToThreeDigits(parseInt(timer.innerText) + 1);
     }, 1000);
 }
 
 function findClickedObj(elem){ //takes element and returns the corresponding cell object
-    const rowClicked = elem.dataset.row; 
-    const colClicked = elem.dataset.col;
+    const elemClicked = elem.tagName === 'IMG'? elem.parentElement: elem;
+    const rowClicked = elemClicked.dataset.row; 
+    const colClicked = elemClicked.dataset.col;
     return cellArray.filter(cellObj => cellObj.row === parseInt(rowClicked) && cellObj.col === parseInt(colClicked))[0];
 }
 
 function displayCell(obj){
     let cellElement = document.querySelector(`[data-row="${obj.row}"][data-col="${obj.col}"]`);
     cellElement.innerHTML = obj.type === 'mine' ? `<img src="images/bomb.png">` : (obj.neighbours > 0? obj.neighbours : '');
+    switch(obj.neighbours){
+        case 1:
+            cellElement.style.color = "blue";
+            break;
+        case 2:
+            cellElement.style.color = "green";
+            break;
+        case 3:
+            cellElement.style.color = "red";
+            break;   
+        case 4:
+            cellElement.style.color = "navy";
+            break;     
+    }
     if(obj.type !='mine') 
         cellElement.classList.add("revealed");
     obj.state = true;
@@ -191,14 +214,21 @@ function openCellRange(obj){
 }    
 
 function endGame(elem){
- resetButton.innerHTML = `<img src="images/dead-face.png">`;
- gameState = 'ended';
- clearInterval(counter);
- //elem.style.backgroundColor = "red";
- cellArray.forEach(cell => displayCell(cell));
- elem.classList.add("selected-mine");
- //console.log('cleared');
+    resetButton.innerHTML = `<img src="images/dead-face.png">`;
+    gameState = 'ended';
+    clearInterval(counter);
+    cellArray.forEach(cell => displayCell(cell));
+    elem.classList.add("selected-mine");
 }
+/*
+function wonGame(elem){
+    resetButton.innerHTML = `<img src="images/dead-face.png">`;
+    gameState = 'ended';
+    clearInterval(counter);
+    cellArray.forEach(cell => displayCell(cell));
+    elem.classList.add("selected-mine");
+}
+*/
 
 function listNeighbours(obj){ //returns an array of neighbouring objects to the object passed in argument
     return cellArray.filter((cell) => {
@@ -206,4 +236,16 @@ function listNeighbours(obj){ //returns an array of neighbouring objects to the 
                [-1,0,1].includes(cell.col - obj.col) && 
                !(cell.row === obj.row && cell.col === obj.col)
      });
+}
+
+function isVictory(){
+    const minesFlagged = cellArray.reduce((count,cell) => {
+        count = cell.useraction==='flagged'? count + 1 : count;
+        return count;
+    },0)
+    const cellsOpened = cellArray.reduce((count,cell) => {
+        count = cell.state===true? count + 1 : count;
+        return count;
+    },0)
+    return minesFlagged === mines && cellsOpened === (boardSize*boardSize-mines); 
 }
