@@ -140,6 +140,8 @@ function flagCell (event, elem){
         minesCount.innerText = setToThreeDigits(parseInt(minesCount.innerText)+1);
     }   
     //return false;
+    if(isVictory())
+        wonGame();
 };
 
 function setToThreeDigits(num){
@@ -166,6 +168,9 @@ function cellClicked(elem){
          gameState = 'ongoing';
          //console.log('timer started');
         }
+
+    if(isVictory())
+        wonGame();
 }
 
 function startTimer(){ 
@@ -220,15 +225,14 @@ function endGame(elem){
     cellArray.forEach(cell => displayCell(cell));
     elem.classList.add("selected-mine");
 }
-/*
-function wonGame(elem){
-    resetButton.innerHTML = `<img src="images/dead-face.png">`;
+
+function wonGame(){
+    resetButton.innerHTML = `<img src="images/cool-face.png">`;
     gameState = 'ended';
     clearInterval(counter);
-    cellArray.forEach(cell => displayCell(cell));
-    elem.classList.add("selected-mine");
+    //cellArray.forEach(cell => displayCell(cell));
+    //elem.classList.add("selected-mine");
 }
-*/
 
 function listNeighbours(obj){ //returns an array of neighbouring objects to the object passed in argument
     return cellArray.filter((cell) => {
