@@ -1,30 +1,15 @@
-//reference implementation - https://nickarocho.github.io/minesweeper/
-
-
 //Define HTML elements
 const resetButton = document.querySelector("#reset"); //reset button
-//const gameCell = document.querySelectorAll("td.game-cell");
-//let gameCell;
 const timer = document.querySelector("#timer");
 const minesCount = document.querySelector("#bomb-counter");
-const easyGame = document.querySelector("#size-9");
-const mediumGame = document.querySelector("#size-16");
-const hardGame = document.querySelector("#size-30");
-const gameTable = document.querySelector("tbody.game-cells");
+const gameTable = document.querySelector("tbody.game-cells"); //container for the game cells
+const levelSelector = document.querySelector('#size-btns');
 
-const overallTable = document.querySelector(".game-container");
-console.log(gameTable.parentElement.style.width);
-
+//Define button actions
 gameTable.addEventListener('click', () => cellClicked(event.target)); //is there a way to write just the function name and arguments without adding the () & => like you would in a function without any arguments
 gameTable.addEventListener('contextmenu', () => flagCell(event,event.target));
-
-//Define actions for clicks 
-//gameCell.forEach( e => e.addEventListener('click', cellClicked));
-//gameCell.forEach( e => e.addEventListener('contextmenu', flagCell)); //right click to flag mine
 resetButton.addEventListener('click', resetGame); //click on smiley face resets game 
-easyGame.addEventListener('click', resetGame);
-mediumGame.addEventListener('click', resetGame);
-hardGame.addEventListener('click', resetGame);
+levelSelector.addEventListener('click', resetGame);
 
 document.addEventListener('DOMContentLoaded', resetGame);
 
@@ -39,69 +24,60 @@ function CellObject (row, column){
 };  
 
 //Declare Global Objects
-let cellArray = []; //Create new cell objects & cell array with all these objects 
-let counter;
+let cellArray = []; //Array that will store each cell object
+let counter; //global timer variable 
 let gameState; // refreshed, ongoing, ended
-let mines = 40; 
-let boardSize = 16;
+let mines = 40; //number of mines - begins at Medium level
+let boardSize = 16; //number of rows & columns - begins at Medium level
 
 //resets cell objects, randomly assign cells to be mines and calculate number of neighbours for the rest
 function resetGame(){
-   switch(this){
-        case easyGame:
+    const level = event.target.tagName === 'IMG' ? event.target.parentElement.innerText : event.target.innerText;
+    switch(level){
+        case ' Easy':
             mines = 10;
             boardSize = 9;
             break;
-        case mediumGame:
+        case ' Medium':
             mines = 40;
             boardSize = 16;
             break;
-        case hardGame:
+        case ' Hard':
             mines = 160;
             boardSize = 30;
             break;    
     }
-    //console.log(gameTable.parentElement);
-
-
+    //reset game configurations 
     cellArray = [];    //flush old cellArray if it existed
-    gameTable.innerHTML = ''; 
+    gameTable.innerHTML = ''; //clear all existing cells in gameTable container from previous iteration
     let tableCellElements = '';
-    for(i=0; i<boardSize; i++){  //create new CellObjects
+    timer.innerText = '000'; //set timer to 0 
+    minesCount.innerText = setToThreeDigits(mines);
+    resetButton.innerHTML = `<img src="images/smiley-face.png">`;
+    gameState = 'refreshed';
+    clearInterval(counter);
+
+    for(i=0; i<boardSize; i++){  //create new Cell Objects & generate HTML code for gameTable container
         tableCellElements = tableCellElements + '<tr>';
         for(j=0; j<boardSize; j++){
             cellArray.push(new CellObject(i,j));
             tableCellElements = tableCellElements + `<td class="game-cell" data-row="${i}" data-col="${j}"></td>`;
         }
         tableCellElements = tableCellElements + '</tr>';
-        //console.log(gameTable);
     }    
     gameTable.innerHTML = gameTable.innerHTML + tableCellElements;
-    document.querySelectorAll(".menu").forEach(e => {
+    document.querySelectorAll(".menu").forEach(e => {//make menu width dynamic with each level
         e.colSpan = `${boardSize}`;
     })
 
-    //cellLoader.innerHTML = tableCellElements;
-    //console.log(tableCellElements);
-    //console.log(cellLoader);
-
-    shuffleArray(cellArray);
-    for (i=0; i<mines; i++){ //pick objects as mines after shuffling array
+    shuffleArray(cellArray); //randomize position of cell objects in cellArray
+    for (i=0; i<mines; i++){ //pick first 'mines' number of objects as mines after shuffling array
         cellArray[i].type = 'mine';
     }
     cellArray.forEach(cell => {
         cell.neighbours = calculateNeighbours(cell); //calculate number of neighbours for each cell object
-        let elem = document.querySelector(`[data-row="${cell.row}"][data-col="${cell.col}"]`);
-            elem.innerText = '';
-            elem.classList.remove("selected-mine", "revealed");
-        //displayCell(cell);
     });
-    timer.innerText = '000'; //set timer to 0 
-    minesCount.innerText = mines < 99 ? `0${mines}`:`${mines}`;
-    resetButton.innerHTML = `<img src="images/smiley-face.png">`;
-    gameState = 'refreshed';
-    clearInterval(counter);
-    //console.log(cellArray)
+    
 } 
 
 /* Randomize array in-place using Durstenfeld shuffle algorithm */
@@ -114,6 +90,7 @@ function shuffleArray(array){
     }
 }
 
+//returns number of neighbours for each cell Object 
 function calculateNeighbours(obj){
   return listNeighbours(obj).reduce((sum, cell) => {
            if(cell.type === 'mine')
@@ -122,54 +99,52 @@ function calculateNeighbours(obj){
         }, 0);
 };
 
+//assign actions when a cell is right clicked or long pressed
 function flagCell (event, elem){ 
-    //console.log(elem);
     event.preventDefault(); //don't open right click menu
     const targetCellElem = elem.tagName === 'IMG'? elem.parentElement: elem;
     const cellObjClicked = findClickedObj(elem);
-    //console.log(cellObjClicked);
     if(cellObjClicked.state === true) return; // right click on opened cells should do nothing
-    else if(cellObjClicked.useraction === 'free'){
+    else if(cellObjClicked.useraction === 'free'){ //if cell is free then flag it and set state to flagged
         targetCellElem.innerHTML = `<img src="images/flag.png">`
         cellObjClicked.useraction = 'flagged';
         minesCount.innerText = setToThreeDigits(parseInt(minesCount.innerText)-1);
     }
-    else {
-        targetCellElem.innerHTML = '';
+    else { //if cell is flagged then remove the flag and set state to free
+        targetCellElem.innerHTML = ''; 
         cellObjClicked.useraction = 'free'; 
         minesCount.innerText = setToThreeDigits(parseInt(minesCount.innerText)+1);
     }   
     //return false;
-    if(isVictory())
+    if(isVictory()) //check if the flag action resulted in user winning the game 
         wonGame();
 };
 
-function setToThreeDigits(num){
+//set reset and timer numbers to 3 digits
+function setToThreeDigits(num){ 
     if(num < -9 || num >= 100) return `${num}`;
     else if (num < 0) return `-0${-num}`;
     else if (num < 10) return `00${num}`;
     else if (num < 100) return `0${num}`;
 }
 
-//determine action on click
+//assign actions when a cell is clicked 
 function cellClicked(elem){
     const objSelected = findClickedObj(elem);
     if(gameState ==='ended' || objSelected.state || objSelected.useraction === 'flagged') 
     //game has ended or selected cell is already opened or selected cell has been flagged by user
         return;
-    else if(objSelected.type === 'mine') //mine cell, so game ends
-        endGame(elem);
-    else if(objSelected.neighbours === 0) //safe cell with zero neighbours, so it opens a set of cells around it
+    else if(objSelected.type === 'mine') //clicked mine cell, so game ends
+        lostGame(elem);
+    else if(objSelected.neighbours === 0) //safe cell with zero neighbours, so it opens all the cells around it
         openCellRange(objSelected); 
-    else displayCell(objSelected); //safe cell with non-zero neighbours, so the cell value is displayed
-
+    else displayCell(objSelected); //safe cell with non-zero neighbours, so just it's own cell value is displayed
     if(gameState === 'refreshed') //if it is the first click, i.e. game just started
         {startTimer();
          gameState = 'ongoing';
-         //console.log('timer started');
         }
 
-    if(isVictory())
+    if(isVictory()) //check if the click action resulted in user winning the game 
         wonGame();
 }
 
@@ -179,16 +154,19 @@ function startTimer(){
     }, 1000);
 }
 
-function findClickedObj(elem){ //takes element and returns the corresponding cell object
+//takes element and returns the corresponding cell object
+function findClickedObj(elem){ 
     const elemClicked = elem.tagName === 'IMG'? elem.parentElement: elem;
     const rowClicked = elemClicked.dataset.row; 
     const colClicked = elemClicked.dataset.col;
     return cellArray.filter(cellObj => cellObj.row === parseInt(rowClicked) && cellObj.col === parseInt(colClicked))[0];
 }
 
+//takes cell object, displays value (neighbour count or mine)
 function displayCell(obj){
     let cellElement = document.querySelector(`[data-row="${obj.row}"][data-col="${obj.col}"]`);
     cellElement.innerHTML = obj.type === 'mine' ? `<img src="images/bomb.png">` : (obj.neighbours > 0? obj.neighbours : '');
+    
     switch(obj.neighbours){
         case 1:
             cellElement.style.color = "blue";
@@ -204,37 +182,38 @@ function displayCell(obj){
             break;     
     }
     if(obj.type !='mine') 
-        cellElement.classList.add("revealed");
+        cellElement.classList.add("revealed"); //change background for non-mine cells when they are opened
     obj.state = true;
 }
 
 function openCellRange(obj){
-    displayCell(obj);
-    listNeighbours(obj).forEach(elem => {
-        if(elem.state===true || elem.useraction === 'flagged') return;
-        if(elem.neighbours===0)  
-            openCellRange(elem);
-        else displayCell(elem);
-    })
+    displayCell(obj); //first display the selected cell
+    listNeighbours(obj).forEach(cell => { //for each neighboring cell object..  
+        if(cell.state===true || cell.useraction === 'flagged') return; //if cell is flagged or open, no action
+        if(cell.neighbours===0)  //if cell has zero neighbours, run the same function for this cell
+            openCellRange(cell);
+        else displayCell(cell); //if cell has non-zero neighbours and not flagged or open, then open it 
+    });
 }    
 
-function endGame(elem){
-    resetButton.innerHTML = `<img src="images/dead-face.png">`;
+//set actions when user has lost game
+function lostGame(elem){
+    resetButton.innerHTML = `<img src="images/dead-face.png">`; //change resetButton icon
     gameState = 'ended';
-    clearInterval(counter);
-    cellArray.forEach(cell => displayCell(cell));
-    elem.classList.add("selected-mine");
+    clearInterval(counter); //stop timer
+    cellArray.forEach(cell => displayCell(cell)); //display all cells
+    elem.classList.add("selected-mine"); //add red background for selected mine cell
 }
 
+//set actions when user has won game
 function wonGame(){
-    resetButton.innerHTML = `<img src="images/cool-face.png">`;
+    resetButton.innerHTML = `<img src="images/cool-face.png">`; //change resetButton icon
     gameState = 'ended';
-    clearInterval(counter);
-    //cellArray.forEach(cell => displayCell(cell));
-    //elem.classList.add("selected-mine");
+    clearInterval(counter); //stop timer
 }
 
-function listNeighbours(obj){ //returns an array of neighbouring objects to the object passed in argument
+//returns an array of neighbouring objects to the object passed in argument
+function listNeighbours(obj){ 
     return cellArray.filter((cell) => {
         return [-1,0,1].includes(cell.row - obj.row) && 
                [-1,0,1].includes(cell.col - obj.col) && 
@@ -242,12 +221,13 @@ function listNeighbours(obj){ //returns an array of neighbouring objects to the 
      });
 }
 
-function isVictory(){
-    const minesFlagged = cellArray.reduce((count,cell) => {
+//return if user has won the game 
+function isVictory(){ 
+    const minesFlagged = cellArray.reduce((count,cell) => { //number of mines flagged by user
         count = cell.useraction==='flagged'? count + 1 : count;
         return count;
     },0)
-    const cellsOpened = cellArray.reduce((count,cell) => {
+    const cellsOpened = cellArray.reduce((count,cell) => { //total number of open cells
         count = cell.state===true? count + 1 : count;
         return count;
     },0)
