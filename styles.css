@@ -4,10 +4,16 @@
     align-items: flex-end;
 }
 
-.card{
-    width: 50rem;
+
+.card-container{
+    width: auto;
 }
+
 
 .card-title{
     font-size: 1.4em;
+}
+
+.card{
+    width: 100%;
 }
