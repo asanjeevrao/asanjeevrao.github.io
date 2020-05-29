@@ -2,17 +2,29 @@ const list = document.querySelector('ul.posts'); //list of posts
 const addSubreddits = document.querySelector('form'); //form for adding subreddit 
 const showSubreddits = document.querySelector('ul.subreddits'); //form for adding subreddit 
 const searchBar = document.querySelector('input#search');
-//console.log(searchBar);
+const dropdown = document.querySelector('.dropdown-menu');
+const dropdownToggle = document.querySelector('.btn-warning');
+console.log(dropdownToggle);
 
 showSubreddits.addEventListener('click', deleteSubreddit);
 searchBar.addEventListener('input', filterResults);
 list.addEventListener('click', clickPost);
 addSubreddits.addEventListener("submit", addNewSubreddit);
+dropdown.addEventListener('click', changeTimePeriod);
+
+function changeTimePeriod()
+{
+  period = event.target.classList[1];
+  displayPosts(subReddits);
+  dropdownToggle.innerText = event.target.innerText;
+  console.log(event.target.innerText);
+}
 
 let subReddits = JSON.parse(localStorage.getItem("subRedditsLocStor")) || ['askreddit'];
 let listHTML = '';
 let postObject = [];
 let postArray =[];
+let period = 'day';
 
 displaySubReddit(subReddits);
 displayPosts(subReddits);
@@ -28,7 +40,7 @@ function fetchPosts(list){ //returns postObject array which is one JSON response
   return new Promise((resolve) => {
     postObject = [];
     list.forEach (elem => {
-        fetch(`https://www.reddit.com/r/${elem}/top.json`)
+        fetch(`https://www.reddit.com/r/${elem}/top.json?t=${period}`)
         .then(response => {
             if(response.status === 403)
                 throw new Error('Access denied');
@@ -87,7 +99,6 @@ function clickPost(){
   window.open(`https://www.reddit.com/r/${postID.dataset.subreddit}/comments/${postID.dataset.id}`);
 }
 
-
 function addNewSubreddit(){
   event.preventDefault();
   const input = this.querySelector('input[type="text"]');
@@ -121,17 +132,14 @@ function deleteSubreddit(){
 function displaySubReddit(list){
   showSubreddits.innerHTML = '';
   showSubreddits.innerHTML = subReddits.map((entry,index) => `
-    <li id = "${index}" class = "subreddit-list">
-      <span class="badge badge-warning badge-pill">
-        ${entry}        
+    <div id = "${index}" class = "subreddit-list badge badge-warning badge-pill">
+        ${entry} 
         <button type="button" class="close" aria-label="Dismiss">
         <span aria-hidden="true">&times;</span>
         </button>
-      </span>
-    </li>
+    </div>
     `).join('');                              
 }
-
-
+    
 
 
