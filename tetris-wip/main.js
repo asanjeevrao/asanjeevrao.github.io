@@ -17,20 +17,8 @@ var tetRow = 0;
 var tetTimer;
 var elementsGrid = [];
 
-
-var tetromino1 = [];
-tetromino1[0] = [   [0,0,0,1],
-                    [0,0,0,1],
-                    [0,0,0,1],
-                    [0,0,0,1]
-                ];
-tetromino1[1] = [   [0,0,0,0],
-                    [1,1,1,1],
-                    [0,0,0,0],
-                    [0,0,0,0]
-                ];                     
 let z = 0;   
-var tetromino = tetromino1[0];      
+
 
 let boardSizeRow = 19; 
 let boardSizeCol = 9;
@@ -41,8 +29,33 @@ let cellsAffected;
 let verticalCollision;
 let leftCollision, rightCollision;
 let gameStateCopy = 'not started';
+let currentTetromino;
+let currentTetrominoOrientation;
+let currentTetrominoColour;
+let score = 0;
+
+const audio = new Audio('soundtrack.mp3');
+const volumeControl = document.querySelector(".volume");
+const volumeOn = document.querySelector(".fa-volume-up");
+const volumeOff = document.querySelector(".fa-volume-mute");
+
+volumeControl.addEventListener('click', toggleVolume);
+
+function toggleVolume() {
+    if([...event.target.classList].includes("fa-volume-up")){
+        audio.volume = 0;
+        volumeOn.style.display = 'none';
+        volumeOff.style.display = 'block';
+    }
+    else {
+        audio.volume = 1;
+        volumeOff.style.display = 'none';
+        volumeOn.style.display = 'block';
+    }
+}
 
 document.addEventListener('DOMContentLoaded', ()=> {
+    
     //resetGame();
     //define elements
     for (let i = 0; i <= boardSizeRow; i++){ //15 rows
@@ -60,44 +73,121 @@ startButton.addEventListener('click', () => {
         //console.log(elementsGrid);
         dropNewTetromino();
         gameStateCopy = 'live';
+        audio.play();
    }
     else if(gameStateCopy === 'live'){
         gameStateCopy = 'paused';
+        clearInterval(tetTimer);
+        audio.pause();
     }
     else if(gameStateCopy === 'paused'){
         gameStateCopy = 'live';
-        tetTimer = setInterval(moveTetromino, 300);
+        tetTimer = setInterval(moveTetromino, 600);
+        audio.play();
     }
     startButton.innerText = gameStateCopy;
 });
 
 function dropNewTetromino(){ //start dropping a new tetromino from position (0,6)
     startRow = 0;
-    startCol = 3;       
+    startCol = 3;
+    z = 0;
+    shuffleArray(tetrominoSet);
+    currentTetromino = tetrominoSet[0].shape;
+    currentTetrominoColour = tetrominoSet[0].colour;
+    //currentTetromino = tetrominoSet[1];
+    currentTetrominoOrientation = currentTetromino[0];       
     verticalCollision = false;
     leftCollision = false;
     rightCollision = false;
     configureTetrominoColour('set');
-    tetTimer = setInterval(moveTetromino, 300);
+    tetTimer = setInterval(moveTetromino, 600);
 }
 
+/* Randomize array in-place using Durstenfeld shuffle algorithm */
+function shuffleArray(array){
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
 
 function moveTetromino(){ //move Tetromino 
     //console.log(hasVerticallyCollided());
+    
     if(verticalCollision){
         clearInterval(tetTimer);
         freezeTerminoLocation();
+        rowClearCheck();
         dropNewTetromino();
         return;
     }
-    if(gameStateCopy==='paused'){
-        clearInterval(tetTimer);
-        return;
+    
+    if(gameStateCopy==='paused'){ //scope for error here - if you pause when there is vertical collision, it will not work
+        //clearInterval(tetTimer);
+        //return;
     }
     configureTetrominoColour('clear');
     startRow++; 
     //console.log(startRow);
     configureTetrominoColour('set');
+}
+//let rowStatus = [];
+function rowClearCheck(){
+    let rowToBeCleared = [];
+    for (let i = 0; i < 4; i++){
+        let rowABC = startRow + i;
+        if(isRowFull(rowABC))
+            rowToBeCleared.push(rowABC);
+    }
+    switch(rowToBeCleared.length){
+        case 0: 
+            break;
+        case 1:
+            score = score + 40;
+            break;
+        case 2:
+            score = score + 100;
+            break;
+        case 3:
+            score = score + 300;
+            break;
+        case 4:
+            score = score + 1200;
+            break;        
+    }    
+    minesCount.innerText = score;
+    console.log(rowToBeCleared);
+    rowToBeCleared.forEach(row => {
+        elementsGrid[row][0].parentElement.classList.add('completed-row');
+    });
+    setTimeout(() => {
+        deleteRow(rowToBeCleared);
+    }, 200);
+}
+
+function deleteRow(rowArray){
+    rowArray.forEach(row => {
+        elementsGrid[row][0].parentElement.classList.remove('completed-row');
+        for (let i = row; i > 0; i--){
+            for (let j = 0; j < boardSizeCol; j++){
+                elementsGrid[i][j].className = elementsGrid[i-1][j].className;
+            }
+        }
+        for (let j = 0; j < boardSizeCol; j++){
+            elementsGrid[0][j].className = 'game-cell';
+        }
+    });
+}
+
+function isRowFull(rowNumber){
+    //console.log(rowNumber);
+    if(rowNumber > boardSizeRow)
+        return false;
+    else    
+        return elementsGrid[rowNumber].every( column => [...column.classList].includes('frozen'));
 }
 
 function freezeTerminoLocation(){
@@ -105,16 +195,16 @@ function freezeTerminoLocation(){
         for (let j = 0; j < 4; j++){
             let rowABC = startRow + i;
             let colABC = startCol + j;
-            let cellValue = tetromino[i][j];
+            let cellValue = currentTetrominoOrientation[i][j];
             if(rowABC > boardSizeRow || colABC > boardSizeCol || colABC < 0)
-                break;
+                continue;
             if(cellValue === 1){
                 //console.log(rowABC,colABC,'added');
                 elementsGrid[rowABC][colABC].classList.add('frozen');
                 }
-            }
         }
-    }    
+    }
+}    
 
 /*
 function hasVerticallyCollided(){
@@ -137,44 +227,54 @@ function configureTetrominoColour(action){
         for (let j = 0; j < 4; j++){
             let rowABC = startRow + i;
             let colABC = startCol + j;
-            let cellValue = tetromino[i][j];
+            let cellValue = currentTetrominoOrientation[i][j];
             if(rowABC > boardSizeRow || colABC > boardSizeCol || colABC < 0){
              //console.log('exiting loop', rowABC, colABC);
                 continue;
             }
             //console.log(rowABC,colABC,cellValue);
             if(action === 'clear' && ![...elementsGrid[rowABC][colABC].classList].includes('frozen')){
-                elementsGrid[rowABC][colABC].classList.remove('tetromino'); 
+                elementsGrid[rowABC][colABC].classList.remove('tetromino');
+                elementsGrid[rowABC][colABC].classList.remove(currentTetrominoColour); 
                 //console.log(rowABC,colABC,'removed');
             }
             if(action === 'set' && cellValue === 1){
                 //console.log(rowABC,colABC,'added');
-                elementsGrid[rowABC][colABC].classList.add('tetromino');
+                elementsGrid[rowABC][colABC].classList.add('tetromino', currentTetrominoColour);
                 if(rowABC === boardSizeRow || [...elementsGrid[rowABC + 1][colABC].classList].includes('tetromino')){  //this logic needs to be refined
                     verticalCollision = true;
                     //console.log('vertical collision happened', rowABC);
                 }
                 if(colABC === 0 || [...elementsGrid[rowABC][colABC - 1].classList].includes('frozen')){  //this logic needs to be refined
                     leftCollision = true;
-                    console.log('left collision happened', colABC);
+                    //console.log('left collision happened', colABC);
                 }
                 if(colABC === boardSizeCol || [...elementsGrid[rowABC][colABC + 1].classList].includes('frozen')){  //this logic needs to be refined
                     rightCollision = true;
-                    console.log('right collision happened', colABC);
+                   // console.log('right collision happened', colABC);
                 }
             }
         }
-    }    
+    }  
+    
+    /*if(verticalCollision){
+        clearInterval(tetTimer);
+        freezeTerminoLocation();
+        rowClearCheck();
+        setTimeout(dropNewTetromino, 600);
+    }
+    */
 }
 
 document.addEventListener('keydown', setKeyboardAction);
+let downArrowState = false;
 
 
 function setKeyboardAction(){
     if(event.keyCode === 37 && leftCollision === false){ //left keystroke
         configureTetrominoColour('clear');
         startCol = Math.max(startCol - 1, -3);
-        console.log(startCol);
+        //console.log(startCol);
         configureTetrominoColour('set');
     }
     if(event.keyCode === 39 && rightCollision === false){ //right keystroke
@@ -183,10 +283,30 @@ function setKeyboardAction(){
         configureTetrominoColour('set');
     }
     if(event.keyCode === 38){ //rotation logic, needs to improve 
+        configureTetrominoColour('clear');
         z++;
-        tetromino = tetromino1[z%2];
+        currentTetrominoOrientation = currentTetromino[z%4];
+        configureTetrominoColour('set');
+    }
+    if(event.keyCode === 40){ //up keystroke, start acceleration 
+        if(!downArrowState){
+            clearInterval(tetTimer);
+            tetTimer = setInterval(moveTetromino, 50);
+            //console.log(event.keyCode + 'presssed');
+            downArrowState = true;
+        }
+       
     }
 }
+
+document.addEventListener('keyup', ()=> {
+    if(event.keyCode === 40){
+        clearInterval(tetTimer);
+        downArrowState = false;
+        //console.log(event.keyCode + 'released');
+        tetTimer = setInterval(moveTetromino, 600);
+    }
+});
 
 //Define cell object
 function CellObject (row, column){

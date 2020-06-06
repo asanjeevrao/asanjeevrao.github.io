@@ -18,7 +18,9 @@ body {
 }
 
 #board {
-    background-color: lightgray;
+    background-color: #696969;
+    border-spacing: 1px;
+    border-color: blue;
 }
 
 button {
@@ -136,11 +138,11 @@ td {
     height: 20px;
     width: 20px;
     background-color: #C0C0C0;
-    border: 1.5px solid;
-    border-top-color: #ffffff;
-    border-right-color: #7B7B7B;
-    border-bottom-color: #7B7B7B;
-    border-left-color: #ffffff;
+    border-top-color: blue;
+    border-right-color: blue;
+    border-bottom-color: blue;
+    border-left-color: blue;
+    border-width: 0.1px;
     text-align: center;
     vertical-align: middle;
 }
@@ -175,7 +177,39 @@ td {
     background: linear-gradient(to right, rgba(33,41,89,1) 0%,rgba(33,41,89,1) 11%,rgba(80,114,161,1) 56%,rgba(117,172,219,0.7) 92%,rgba(125,185,232,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#212959', endColorstr='#007db9e8',GradientType=1 ); /* IE6-9 */
 }
+.game-cell{
+    background-color: black;
+}
 
-.tetromino{
+.red{
     background-color: red;
+}
+
+.blue{
+    background-color: blue;
+}
+
+.green{
+    background-color: green;
+}
+
+.yellow{
+    background-color: yellow;
+}
+
+.purple{
+    background-color: purple;
+}
+
+.orange{
+    background-color: orange;
+}
+
+.aqua{
+    background-color: aqua;
+}
+
+.completed-row{
+    outline-style: solid;
+    outline-color: white;
 }
