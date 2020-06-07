@@ -1,4 +1,9 @@
 @font-face {
+    font-family: "Tetris";
+    src: url("Tetris.ttf");
+}
+
+@font-face {
     font-family: "Digital Dismay";
     src: url("fonts/digital-dismay.otf") format("truetype");
 }
@@ -14,7 +19,7 @@
 }
 
 body {
-    background-color: #0D8584;
+    background-color: #DCDCDC;
 }
 
 #board {
@@ -132,6 +137,7 @@ button:hover {
     border-right: 2px solid #ffffff;
     border-bottom: 2px solid #ffffff;
     border-left: 2px solid #7B7B7B;
+    background-color: black;
 }
 
 td {
@@ -212,4 +218,15 @@ td {
 .completed-row{
     outline-style: solid;
     outline-color: white;
+}
+
+h1{
+    font-family: "Tetris";
+}
+
+.fas{
+    font-size: 1.6em;
+    color: red;
+    vertical-align: middle;
+    padding-top: 6px;
 }

@@ -6,12 +6,13 @@ const gameTable = document.querySelector("tbody.game-cells"); //container for th
 const levelSelector = document.querySelector('#size-btns');
 const startButton = document.querySelector('#start');
 console.log(startButton);
+const play = document.querySelector('.fa-play-circle');
+const pause = document.querySelector('.fa-pause-circle');
 
 //Define button actions
 gameTable.addEventListener('click', () => cellClicked(event.target)); //is there a way to write just the function name and arguments without adding the () & => like you would in a function without any arguments
 //gameTable.addEventListener('contextmenu', () => flagCell(event,event.target));
-resetButton.addEventListener('click', resetGame); //click on smiley face resets game 
-levelSelector.addEventListener('click', resetGame);
+//resetButton.addEventListener('click', resetGame); //click on smiley face resets game 
 
 var tetRow = 0;
 var tetTimer;
@@ -74,18 +75,24 @@ startButton.addEventListener('click', () => {
         dropNewTetromino();
         gameStateCopy = 'live';
         audio.play();
+        play.style.display = 'none';
+        pause.style.display = 'block';
    }
     else if(gameStateCopy === 'live'){
         gameStateCopy = 'paused';
         clearInterval(tetTimer);
         audio.pause();
+        pause.style.display = 'none';
+        play.style.display = 'block';
     }
     else if(gameStateCopy === 'paused'){
         gameStateCopy = 'live';
         tetTimer = setInterval(moveTetromino, 600);
         audio.play();
+        play.style.display = 'none';
+        pause.style.display = 'block';
     }
-    startButton.innerText = gameStateCopy;
+    //startButton.innerText = gameStateCopy;
 });
 
 function dropNewTetromino(){ //start dropping a new tetromino from position (0,6)
@@ -158,7 +165,7 @@ function rowClearCheck(){
             score = score + 1200;
             break;        
     }    
-    minesCount.innerText = score;
+    minesCount.innerText = setToThreeDigits(score);
     console.log(rowToBeCleared);
     rowToBeCleared.forEach(row => {
         elementsGrid[row][0].parentElement.classList.add('completed-row');
