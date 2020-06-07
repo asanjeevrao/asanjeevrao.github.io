@@ -238,8 +238,7 @@ function configureTetrominoColour(action){
 }
 
 
-
-function setKeyboardAction(){
+function setKeyboardAction(event){
     if(event.keyCode === 37 && leftCollision === false){ //left keystroke
         configureTetrominoColour('clear');
         startCol = Math.max(startCol - 1, -3);
@@ -268,6 +267,34 @@ function setKeyboardAction(){
     }
 }
 
+function setSwipeAction(swipeDir){
+    if(swipeDir === 'l' && leftCollision === false){ //left keystroke
+        configureTetrominoColour('clear');
+        startCol = Math.max(startCol - 1, -3);
+        //console.log(startCol);
+        configureTetrominoColour('set');
+    }
+    if(swipeDir === 'r' && rightCollision === false){ //right keystroke
+        configureTetrominoColour('clear');
+        startCol = Math.min(startCol + 1, boardSizeCol);
+        configureTetrominoColour('set');
+    }
+    if(swipeDir === 'up'){ //rotation logic, needs to improve 
+        configureTetrominoColour('clear');
+        orientation++;
+        currentTetrominoOrientation = currentTetromino[orientation%4];
+        configureTetrominoColour('set');
+    }
+    if(event.keyCode === 40){ //up keystroke, start acceleration 
+        if(!downArrowState){
+            clearInterval(tetTimer);
+            tetTimer = setInterval(moveTetromino, 50);
+            //console.log(event.keyCode + 'presssed');
+            downArrowState = true;
+        }
+       
+    }
+}
 
 function checkDownArrowRelease(){
     if(event.keyCode === 40){
@@ -310,7 +337,13 @@ function shuffleArray(array){
 }
 
 //Detect swipe on mobile - https://stackoverflow.com/questions/15084675/how-to-implement-swipe-gestures-for-mobile-devices
-function detectswipe(el,func) {
+
+const ele = document.getElementById('board');
+ele.addEventListener('click', ()=>{
+    setSwipeAction('up');
+})
+
+function detectswipe() {
     swipe_det = new Object();
     swipe_det.sX = 0; swipe_det.sY = 0; swipe_det.eX = 0; swipe_det.eY = 0;
     var min_x = 30;  //min x swipe for horizontal swipe
@@ -318,7 +351,6 @@ function detectswipe(el,func) {
     var min_y = 50;  //min y swipe for vertical swipe
     var max_y = 60;  //max y difference for horizontal swipe
     var direc = "";
-    ele = document.getElementById(el);
     ele.addEventListener('touchstart',function(e){
       var t = e.touches[0];
       swipe_det.sX = t.screenX; 
@@ -343,15 +375,12 @@ function detectswipe(el,func) {
       }
   
       if (direc != "") {
-        if(typeof func == 'function') func(el,direc);
+        setSwipeAction(direc);
+        console.log("you swiped in "+direc+" direction");
       }
       direc = "";
       swipe_det.sX = 0; swipe_det.sY = 0; swipe_det.eX = 0; swipe_det.eY = 0;
     },false);  
   }
-  
-  function myfunction(el,d) {
-    alert("you swiped on element with id '"+el+"' to "+d+" direction");
-  }
 
-  detectswipe('table',myfunction);
+  detectswipe();
