@@ -1,9 +1,4 @@
 
-*{
-  font-family: "Open Sans";
-}
-
-.badge {
     .close {
       padding-right: $badge-padding-x;
       padding-left: $badge-padding-x;
@@ -12,7 +7,7 @@
       color: inherit;
       text-shadow: none;
     }
-  }
+  
 
 /*
   .subreddit-list {
@@ -36,7 +31,10 @@
 }
 
 .badge-warning{
-  padding-top: 10px;; 
+  font-size: 0.85em;
+  padding-top: 6px;
+  padding-bottom: 6px; 
+  padding-right: 0;
 }
 
 .close{

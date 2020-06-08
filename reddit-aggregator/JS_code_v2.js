@@ -119,7 +119,7 @@ function addNewSubreddit(){
 function deleteSubreddit(){
   const closeButton = event.target.closest('button');
   if(closeButton){
-    const subr = closeButton.closest('li').id;
+    const subr = closeButton.closest('div').id;
     subReddits.splice(subr,1);
     displaySubReddit(subReddits);
     displayPosts(subReddits);
