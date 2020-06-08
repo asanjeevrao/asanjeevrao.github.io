@@ -30,6 +30,10 @@
   font-size: 0.8em;
 }
 
+.dropdown-toggle{
+  font-size: 0.8em;
+}
+
 .badge-warning{
   font-size: 0.85em;
   padding-top: 6px;
@@ -44,4 +48,10 @@
 
 .subreddits{
   padding-left: 0px;
+}
+
+.subreddit-title{
+  color:#0275d8;
+  font-weight: bold;
+  font-size: 1.2em;
 }
