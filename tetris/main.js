@@ -285,15 +285,6 @@ function setSwipeAction(swipeDir){
         currentTetrominoOrientation = currentTetromino[orientation%4];
         configureTetrominoColour('set');
     }
-    if(event.keyCode === 40){ //up keystroke, start acceleration 
-        if(!downArrowState){
-            clearInterval(tetTimer);
-            tetTimer = setInterval(moveTetromino, 50);
-            //console.log(event.keyCode + 'presssed');
-            downArrowState = true;
-        }
-       
-    }
 }
 
 function checkDownArrowRelease(){
@@ -339,7 +330,7 @@ function shuffleArray(array){
 //Detect swipe on mobile - https://stackoverflow.com/questions/15084675/how-to-implement-swipe-gestures-for-mobile-devices
 
 const ele = document.getElementById('board');
-ele.addEventListener('click', ()=>{
+ele.addEventListener('click', () => {
     setSwipeAction('up');
 });
 detectswipe();
@@ -379,28 +370,9 @@ function detectswipe() {
             swipe_det.sY = swipe_det.eY;
         }
       }
-
-
     },false);
     
     ele.addEventListener('touchend',function(e){
-      /*
-     //horizontal detection
-      if ((((swipe_det.eX - min_x > swipe_det.sX) || (swipe_det.eX + min_x < swipe_det.sX)) && ((swipe_det.eY < swipe_det.sY + max_y) && (swipe_det.sY > swipe_det.eY - max_y) && (swipe_det.eX > 0)))) {
-        if(swipe_det.eX > swipe_det.sX) direc = "r";
-        else direc = "l";
-      }
-      //vertical detection
-      else if ((((swipe_det.eY - min_y > swipe_det.sY) || (swipe_det.eY + min_y < swipe_det.sY)) && ((swipe_det.eX < swipe_det.sX + max_x) && (swipe_det.sX > swipe_det.eX - max_x) && (swipe_det.eY > 0)))) {
-        if(swipe_det.eY > swipe_det.sY) direc = "d";
-        else direc = "u";
-      }
-  
-      if (direc != "") {
-        setSwipeAction(direc);
-        console.log("you swiped in "+direc+" direction");
-      }
-      */
       direc = "";
       swipe_det.sX = 0; swipe_det.sY = 0; swipe_det.eX = 0; swipe_det.eY = 0;
     },false);  
