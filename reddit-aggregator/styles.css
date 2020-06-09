@@ -32,6 +32,7 @@
 
 .dropdown-toggle{
   font-size: 0.8em;
+  font-weight: 600;
 }
 
 .badge-warning{
@@ -54,4 +55,8 @@
   color:#0275d8;
   font-weight: bold;
   font-size: 1.2em;
+}
+
+.subreddit-list{
+  text-transform: capitalize;
 }
