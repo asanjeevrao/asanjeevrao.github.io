@@ -1,0 +1,9 @@
+http://www.omdbapi.com/?apikey=88607469&i=tt1442437&season=8&episode=10
+
+http://www.omdbapi.com/?apikey=88607469&i=tt1442437&season=8
+this mentions number of seasons and all episodes in that season 
+
+office id - tt0386676
+
+Rejected this other option - https://api.themoviedb.org/3/search/tv?api_key=ebf273600c07f29a3f67478b060ac3cf&query=the-office
+because they have their own rating system where user vote counts are much lesser than IMDB
