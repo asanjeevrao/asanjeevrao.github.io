@@ -26,7 +26,7 @@ let episodeCount = 0;
 let episodeList = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-  //fetchPosts("the-office");
+  fetchPosts("the-office");
 });
 
 //how to catch 403 errors? Forbidden pages which are private subreddits
