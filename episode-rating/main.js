@@ -38,7 +38,7 @@ async function fetchPosts(showName) {
 
   try {
     let responseShowName = await fetch(
-      `http://www.omdbapi.com/?apikey=88607469&t=${showName}`
+      `https://www.omdbapi.com/?apikey=88607469&t=${showName}`
     );
     data = await responseShowName.json();
     seasons = data.totalSeasons;
@@ -52,7 +52,9 @@ async function fetchPosts(showName) {
   let outputArray = await Promise.all(
     [...Array(parseInt(seasons)).keys()].map((elem) =>
       fetch(
-        `http://www.omdbapi.com/?apikey=88607469&i=${imdbID}&season=${elem + 1}`
+        `https://www.omdbapi.com/?apikey=88607469&i=${imdbID}&season=${
+          elem + 1
+        }`
       ).then((response) => response.json())
     )
   );
@@ -63,7 +65,7 @@ async function fetchPosts(showName) {
   let promiseArray = [];
   for (let i = 0; i < seasons; i++) {
     promiseArray[i] = fetch(
-      `http://www.omdbapi.com/?apikey=88607469&i=${data.imdbID}&season=${i + 1}`
+      `https://www.omdbapi.com/?apikey=88607469&i=${data.imdbID}&season=${i + 1}`
     ).then((response) => response.json());
   }
   const outputArray = await Promise.all(promiseArray);
@@ -92,7 +94,7 @@ async function renderPosts(episodeListObjArray) {
   let z = await Promise.all(
     episodeListObjArray.map((episode) =>
       fetch(
-        `http://www.omdbapi.com/?apikey=88607469&i=${episode.imdbID}`
+        `https://www.omdbapi.com/?apikey=88607469&i=${episode.imdbID}`
       ).then((response) => response.json())
     )
   );
@@ -133,7 +135,7 @@ function fetchMoreEpisodes() {
 /*function clickPost() {
   const postID = event.target.closest(".card");
   window.open(
-    `https://www.reddit.com/r/${postID.dataset.subreddit}/comments/${postID.dataset.id}`
+    `httpss://www.reddit.com/r/${postID.dataset.subreddit}/comments/${postID.dataset.id}`
   );
 }
 */
