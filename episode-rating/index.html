@@ -8,9 +8,9 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://kit.fontawesome.com/486f913765.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
@@ -21,7 +21,11 @@
     <form autocomplete="off" action="">
       <div class="autocomplete">
         <input type="text" id="title" class="form-control" placeholder="Search for a TV Show" required />
-        <input type="submit" class="btn btn-primary mt-3" id="submitBtn" />
+        <!--<input type="submit" class="btn btn-primary mt-3" id="submitBtn" />-->
+        <button type="button" class="close-icon close" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <button type="submit" class="search-icon"><i class="fa fa-search"></i></button>
         <div class="autocomplete-items"></div>
       </div>
     </form>

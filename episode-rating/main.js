@@ -6,6 +6,7 @@ const searchBar = document.querySelector("input.form-control");
 const autocompleteDropDown = document.querySelector("div.autocomplete-items");
 const dropdown = document.querySelector(".dropdown-menu");
 const dropdownToggle = document.querySelector(".btn-warning");
+const closeButton = document.querySelector(".close-icon");
 console.log(dropdownToggle);
 
 //showSubreddits.addEventListener("click", deleteSubreddit);
@@ -144,7 +145,7 @@ function newSearchEntry() {
   event.preventDefault();
   const input = this.querySelector('input[type="text"]');
   const searchTerm = input.value;
-  input.value = "";
+  //input.value = "";
   document.querySelector(".show-name").innerText = searchTerm;
   fetchPosts(searchTerm.toLowerCase().trim().split(/\s+/).join("-"));
 }
@@ -377,6 +378,8 @@ var countries = [
 ];
 
 function autocompleteSearch() {
+  closeButton.style.display = "inline";
+
   /*
   const term = searchBar.value;
   const suggestedList = countries.filter((country) =>
@@ -388,3 +391,9 @@ function autocompleteSearch() {
   console.log(suggestedList);
   */
 }
+
+closeButton.addEventListener("click", () => {
+  searchBar.value = "";
+  searchBar.focus();
+  closeButton.style.display = "none";
+});

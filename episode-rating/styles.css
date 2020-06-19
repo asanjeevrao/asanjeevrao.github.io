@@ -1,13 +1,4 @@
 
-    .close {
-      padding-right: $badge-padding-x;
-      padding-left: $badge-padding-x;
-      margin-right: -$badge-padding-x;
-      font-size: inherit;
-      color: inherit;
-      text-shadow: none;
-    }
-  
 
 /*
   .subreddit-list {
@@ -40,11 +31,6 @@
   padding-top: 6px;
   padding-bottom: 6px; 
   padding-right: 0;
-}
-
-.close{
-  margin-left : 5px;
-  margin-right : 5px  
 }
 
 .subreddits{
@@ -102,6 +88,10 @@
 .autocomplete {
   /*the container must be positioned relative:*/
   position: relative;
+  display:flex;
+  flex-direction: row;
+  border: 1px solid grey;
+  border-radius: 4px;
 }
 
 .autocomplete-items {
@@ -129,4 +119,24 @@
   /*when navigating through the items using the arrow keys:*/
   background-color: DodgerBlue !important;
   color: #ffffff;
+}
+
+button.close-icon{
+  font-size: 1.8em;
+  display: none;
+  padding-bottom: 2px;
+}
+
+.form-control{
+  border:none;
+}
+
+.search-icon{
+  border:none;
+  background-color: white;
+}
+
+.fa-search{
+  font-size: 1.2em;
+  color: #007bff;
 }
