@@ -5,6 +5,9 @@
   padding: 100px;
 }  
 */
+*:focus {
+  outline: 0;
+}
 
 .card-body{
   padding-bottom : 0.5rem
@@ -124,11 +127,22 @@
 button.close-icon{
   font-size: 1.8em;
   display: none;
-  padding-bottom: 2px;
+  padding-bottom: 6px;
+  color:#8d98b3;
+  
 }
+
+button.close-icon:hover{
+  color: #007bffc2;
+}
+
 
 .form-control{
   border:none;
+}
+
+.form-control:focus {
+  box-shadow: none;
 }
 
 .search-icon{

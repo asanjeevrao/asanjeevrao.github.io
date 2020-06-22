@@ -378,7 +378,8 @@ var countries = [
 ];
 
 function autocompleteSearch() {
-  closeButton.style.display = "inline";
+  if (searchBar.value != "") closeButton.style.display = "inline";
+  else closeButton.style.display = "none";
 
   /*
   const term = searchBar.value;
