@@ -186,6 +186,7 @@ function getAccessToken(code) {
         `,
     headers: new Headers({
       Authorization: "Basic " + btoa(`${clientID}:${secret}`),
+      "Content-Type": "application/x-www-form-urlencoded",
     }),
   })
     .then(function (resp) {
