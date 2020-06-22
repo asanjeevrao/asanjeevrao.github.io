@@ -185,7 +185,7 @@ function getAccessToken(code) {
         redirect_uri=https://asanjeevrao.github.io/reddit-aggregator/index.html
         `,
     headers: new Headers({
-      Authorization: `Basic ${base64.encode(`${clientID}:${secret}`)}`,
+      Authorization: "Basic " + btoa(`${clientID}:${secret}`),
     }),
   })
     .then(function (resp) {
