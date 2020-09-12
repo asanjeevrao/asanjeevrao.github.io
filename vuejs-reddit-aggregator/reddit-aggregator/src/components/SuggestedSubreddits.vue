@@ -223,6 +223,7 @@ export default {
   font-size: 0.8em;
   color: #7d7676;
   padding-top: 5px;
+  padding-left: 6px;
 }
 .subreddit-description-desktop {
   font-size: 0.85em;
@@ -236,7 +237,7 @@ export default {
 }
 
 .subreddit-names {
-  text-align: center;
+  text-align: left;
   cursor: pointer;
 }
 

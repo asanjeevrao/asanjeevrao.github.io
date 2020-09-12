@@ -2,7 +2,7 @@
   <div class="posts-component">
     <div class="posts-menu">
       <div id="posts-heading">
-        <h5>Posts</h5>
+        <h5 id="posts-heading-name">Posts</h5>
         <b-icon
           id="info-icon"
           icon="info-circle"
@@ -209,6 +209,7 @@ a {
 .posts-menu {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 5px;
 }
 
 .dropdown {
@@ -251,7 +252,7 @@ a {
 #posts-heading {
   display: flex;
   justify-content: left;
-  align-items: top;
+  align-items: center;
 }
 
 #info-icon {
@@ -262,5 +263,9 @@ a {
 
 #post-title {
   font-weight: 400;
+}
+
+#posts-heading-name {
+  margin-bottom: 0;
 }
 </style>
