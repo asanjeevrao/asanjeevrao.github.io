@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <b-container fluid="md">
-      <Navigation :user="user"> </Navigation>
+      <Navigation :user="user" @toggle-email-setting="toggleEmailSetting">
+      </Navigation>
       <ErrorMessage
         v-if="!validSubreddit"
         :errorMessage="errorMessage"
@@ -38,6 +39,7 @@ import Subreddits from "./components/Subreddits.vue";
 import SuggestedSubreddits from "./components/SuggestedSubreddits.vue";
 import Posts from "./components/Posts.vue";
 import { subredditCollection } from "./firebaseConfig";
+import { userSettingsCollection } from "./firebaseConfig";
 import { firebaseLogin } from "./firebaseConfig.js";
 import Vue from "vue";
 
@@ -122,6 +124,7 @@ export default {
         loggedIn: false,
         data: {},
         id: "",
+        emailSub: false,
       },
       selectedTopicPosition: 0,
       topicsList: ["General"],
@@ -294,6 +297,24 @@ export default {
       const newSelectedTopicPosition = 0; //can add some logic here later to roll to next topic
       //this.filterRelevantSubreddits(newSelectedTopicPosition);
       this.focusTopic(newSelectedTopicPosition);
+    },
+    async toggleEmailSetting() {
+      this.user.emailSub = !this.user.emailSub;
+      console.log(this.user.data);
+      await userSettingsCollection
+        .doc(this.user.data.uid)
+        .set({
+          emailSetting: this.user.emailSub,
+          userID: this.user.id,
+          googleID: this.user.data.uid,
+          email: this.user.data.email,
+        })
+        .then(() => {
+          console.log("Document successfully written!");
+        })
+        .catch(function(error) {
+          console.error("Error: ", error);
+        });
     },
   },
 };

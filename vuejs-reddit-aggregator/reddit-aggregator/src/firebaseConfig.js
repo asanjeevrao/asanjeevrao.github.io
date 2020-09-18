@@ -17,6 +17,7 @@ const app = initializeApp({
 
 export const db = app.firestore();
 export const subredditCollection = db.collection("subredditList");
+export const userSettingsCollection = db.collection("userSettingsCollection");
 
 export const firebaseLogin = {
   auth: firebase.auth(),

@@ -135,10 +135,12 @@ export default {
             );
           });
       });
+      /*
       this.posts.forEach((post) => {
         console.log(post.data.ups / post.data.subreddit_subscribers);
       });
       console.log("check");
+      */
     },
     sortPosts() {
       console.log("time changed");

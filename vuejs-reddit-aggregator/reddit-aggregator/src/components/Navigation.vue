@@ -50,6 +50,8 @@
       <div v-if="authenticated" class="logged-in">
         <p class="user-name">Hi, {{ user.data.displayName.split(" ")[0] }}</p>
         <div @click="logout" class="logout-button"><span>Logout</span></div>
+        <button v-if="!user.emailSub" @click="toggleSub">email sub</button>
+        <button v-else @click="toggleSub">email unsub</button>
       </div>
     </div>
   </div>
@@ -72,6 +74,10 @@ export default {
 
     logout() {
       firebaseLogin.logout();
+    },
+    toggleSub() {
+      this.$emit("toggle-email-setting");
+      console.log("toggle event emitted");
     },
   },
 };
