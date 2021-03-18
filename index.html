@@ -11,6 +11,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://kit.fontawesome.com/486f913765.js" crossorigin="anonymous"></script>
 
+      <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/4.3.1/iframeResizer.min.js"
+      integrity="sha512-ngVIPTfUxNHrVs52hA0CaOVwC3/do2W4jUEJIufgZQicmY27iAJAind8BPtK2LoyIGiAFcOkjO18r5dTUNLFAw=="
+      crossorigin="anonymous"
+    ></script>
+  
 </head>
 
 <body>
@@ -53,7 +59,17 @@
                         <a href="https://github.com/asanjeevrao/asanjeevrao.github.io/tree/master/reddit-aggregator"
                             class="btn btn-link">Source Code</a>
                     </div>
-                </div>
+                </div> 
+    <iframe
+      src="http://localhost:3000/w/betterhabits/embed"
+      frameborder="0"
+      scrolling="auto"
+      width="100%"
+      style="height: 400px; overflow: hidden"
+      id="hoist-wall-iframe"
+      onload='javascript:(function(){iFrameResize({ log: false }, "#hoist-wall-iframe");}());'
+    ></iframe>
+
                 <div class="card bg-light mb-3">
                     <!--<img class="card-img-top" src="" alt="Card image cap">-->
                     <div class="card-body">
